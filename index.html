@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Inicial de Digitalización 3º ESO</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #0284c7 100%);
+        }
+
+        /* STYLING PARA IMPRESIÓN PDF */
+        @media print {
+            .no-print, header, footer, #screen-register, #screen-quiz, #matrix-modal, button {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 10pt !important;
+                line-height: 1.3 !important;
+            }
+            #screen-results {
+                display: block !important;
+            }
+            #section-review {
+                display: block !important;
+                page-break-before: always;
+            }
+            .card-print {
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+                margin-bottom: 12px !important;
+                padding: 12px !important;
+                border-radius: 8px !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-blue-200">
+
+    <!-- HEADER / HERO BANNER -->
+    <header class="gradient-bg text-white shadow-lg no-print">
+        <div class="max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <span class="inline-block bg-blue-400/30 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-1">
+                    Curso 2026 - 2027 • LOMLOE
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                    Evaluación Inicial de Digitalización 3º ESO
+                </h1>
+                <p class="text-sm sm:text-base text-blue-200 font-medium mt-0.5">
+                    Prof: Martín Ramón Morales Fuentes
+                </p>
+            </div>
+            <div id="header-stats" class="hidden sm:flex flex-col items-end text-right text-xs bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
+                <span id="badge-student-name" class="font-bold text-white text-sm">--</span>
+                <span id="badge-student-group" class="text-blue-200">Grupo: --</span>
+                <span id="badge-progress" class="text-blue-300 mt-1 font-semibold">Progreso: 0 / 40</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+
+        <!-- SCREEN 1: REGISTRATION FORM -->
+        <section id="screen-register" class="bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-slate-100 max-w-2xl mx-auto my-4">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold text-2xl shadow-inner">
+                    💻
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">Identificación del Alumnado (3º ESO)</h2>
+                <p class="text-slate-500 text-sm mt-1">Completa tus datos personales antes de acceder a la prueba diagnóstica.</p>
+            </div>
+
+            <form id="form-user" onsubmit="startAssessment(event)" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="user-name">Nombre *</label>
+                    <input type="text" id="user-name" required placeholder="Ej. Alex" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="user-surname">Apellidos *</label>
+                    <input type="text" id="user-surname" required placeholder="Ej. Fernández Gómez" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1" for="user-group">Curso / Grupo *</label>
+                        <select id="user-group" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none bg-white">
+                            <option value="">Seleccionar grupo...</option>
+                            <option value="3º ESO A">3º ESO A</option>
+                            <option value="3º ESO B">3º ESO B</option>
+                            <option value="3º ESO C">3º ESO C</option>
+                            <option value="3º ESO D">3º ESO D</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1" for="user-email">Correo Educativo *</label>
+                        <input type="email" id="user-email" required placeholder="alumno@educa.es" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                    </div>
+                </div>
+
+                <div class="bg-blue-50/80 p-4 rounded-xl border border-blue-200 text-xs text-blue-900 space-y-1.5">
+                    <p class="font-bold">📋 Instrucciones de la prueba:</p>
+                    <ul class="list-disc list-inside space-y-1 text-slate-700">
+                        <li><strong>40 Preguntas totales</strong> distribuidas en los 4 Bloques LOMLOE.</li>
+                        <li><strong>5 Preguntas en inglés (CLIL)</strong> para evaluar la competencia lingüística técnica.</li>
+                        <li>Formatos variados: test visuales, esquemas SVG, fórmulas de cálculo, reordenación y respuesta corta.</li>
+                        <li><strong>Botón de entrega final:</strong> Aparece exclusivamente en la última pregunta (Pregunta 40).</li>
+                    </ul>
+                </div>
+
+                <button type="submit" class="w-full gradient-bg hover:opacity-95 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 text-base">
+                    <span>Comenzar Evaluación Inicial 3º ESO</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </button>
+            </form>
+        </section>
+
+        <!-- SCREEN 2: QUESTION RUNNER -->
+        <section id="screen-quiz" class="hidden space-y-6 no-print">
+            <!-- Progress Header Bar -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="w-full sm:w-1/3">
+                    <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
+                        <span>Progreso Diagnóstico</span>
+                        <span id="progress-text">1 de 40</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-300 w-0"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 text-xs font-semibold">
+                    <span id="block-tag" class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                        Bloque A: Dispositivos y Redes
+                    </span>
+                    <span id="english-tag" class="hidden px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 font-bold">
+                        🇬🇧 English Question (CLIL)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl shadow-md p-6 sm:p-8 border border-slate-200 relative min-h-[400px] flex flex-col justify-between">
+                <div>
+                    <!-- Question Header -->
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                        <span id="q-number" class="text-sm font-extrabold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg">
+                            Pregunta 01 / 40
+                        </span>
+                        <span id="q-competence" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                            Competencia Digital (CD)
+                        </span>
+                    </div>
+
+                    <!-- Question Text -->
+                    <h3 id="q-title" class="text-lg sm:text-xl font-bold text-slate-800 mb-4 leading-snug">
+                        Cargando pregunta...
+                    </h3>
+
+                    <!-- Visual Context (SVG or Diagram) -->
+                    <div id="q-visual" class="mb-5 hidden bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-center items-center">
+                    </div>
+
+                    <!-- Answer Interactive Container -->
+                    <div id="q-options" class="space-y-3 my-4">
+                        <!-- Options injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
+                    <button id="btn-prev" onclick="prevQuestion()" disabled 
+                        class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-all flex items-center gap-1">
+                        ← Anterior
+                    </button>
+
+                    <!-- Question Matrix Jump Toggle -->
+                    <button onclick="toggleMatrixModal()" class="text-xs text-blue-600 font-bold hover:underline px-2 py-1">
+                        📋 Mapa de preguntas
+                    </button>
+
+                    <!-- Next Button -->
+                    <button id="btn-next" onclick="nextQuestion()" 
+                        class="px-6 py-2.5 rounded-xl gradient-bg text-white font-semibold hover:opacity-95 transition-all shadow-md flex items-center gap-1">
+                        Siguiente →
+                    </button>
+
+                    <!-- FINISH SUBMIT BUTTON -->
+                    <button id="btn-finish" onclick="confirmSubmission()" class="hidden px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg transition-all animate-pulse flex items-center gap-2">
+                        <span>🏁 Finalizar y Entregar Evaluación</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- MATRIX QUICK JUMP MODAL -->
+        <div id="matrix-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl p-6 max-w-xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-slate-800 text-lg">Navegador de Preguntas (1 a 40)</h3>
+                    <button onclick="toggleMatrixModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+                </div>
+                <div id="matrix-grid" class="grid grid-cols-5 sm:grid-cols-8 gap-2 mb-6">
+                    <!-- Dynamic Matrix Buttons -->
+                </div>
+                <div class="flex items-center gap-4 text-xs text-slate-500 justify-center border-t border-slate-100 pt-3">
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Respondida</span>
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-slate-200 border border-slate-400"></span> Pendiente</span>
+                    <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-600"></span> Actual</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: RESULTS & FULL REPORT DASHBOARD -->
+        <section id="screen-results" class="hidden space-y-8">
+            <!-- Header Result Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-slate-200 card-print">
+                <div class="border-b border-slate-200 pb-6 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Informe Diagnosticador LOMLOE</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-800 mt-1">Evaluación Inicial de Digitalización 3º ESO</h2>
+                        <p class="text-sm font-semibold text-slate-600 mt-1">Prof: Martín Ramón Morales Fuentes</p>
+                    </div>
+                    <div class="text-right border-l-0 sm:border-l sm:pl-6 border-slate-200">
+                        <p id="res-student-fullname" class="text-lg font-bold text-slate-800">--</p>
+                        <p id="res-student-group" class="text-sm text-slate-500">Grupo: --</p>
+                        <p id="res-student-email" class="text-xs text-slate-400">--</p>
+                        <p id="res-date" class="text-xs text-slate-400 mt-1">Fecha: --</p>
+                    </div>
+                </div>
+
+                <!-- Global Score & Badge -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center my-6">
+                    <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-200 flex flex-col items-center justify-center">
+                        <span class="text-xs font-semibold uppercase text-slate-500">Calificación Global</span>
+                        <div id="res-score-num" class="text-5xl font-black text-blue-600 my-2">0.0</div>
+                        <span id="res-score-max" class="text-xs text-slate-400">sobre 10.0 puntos</span>
+                        <div id="res-level-badge" class="mt-3 px-4 py-1.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+                            Evaluando...
+                        </div>
+                    </div>
+
+                    <!-- Diagnostic Chart Breakdown -->
+                    <div class="md:col-span-2 space-y-3 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                        <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">
+                            Desglose Competencial y LOMLOE
+                        </h4>
+                        
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Bloque A: Dispositivos, Sistemas y Redes</span>
+                                <span id="score-block-a">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div id="bar-block-a" class="bg-blue-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Bloque B: Entorno Personal de Aprendizaje (PLE)</span>
+                                <span id="score-block-b">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div id="bar-block-b" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Bloque C: Ciberseguridad y Bienestar Digital</span>
+                                <span id="score-block-c">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div id="bar-block-c" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Bloque D: Ciudadanía Digital, Licencias e IA</span>
+                                <span id="score-block-d">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div id="bar-block-d" class="bg-purple-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>🇬🇧 Competencia Bilingüe CLIL (English Questions)</span>
+                                <span id="score-block-en">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div id="bar-block-en" class="bg-indigo-600 h-full w-0 transition-all duration-500"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Feedback Box -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-900 mt-4">
+                    <p class="font-bold mb-1">📝 Dictamen Pedagógico Inicial:</p>
+                    <p id="res-pedagogical-advice">
+                        Procesando análisis de respuestas para el perfil de aprendizaje...
+                    </p>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-end gap-4 no-print border-t border-slate-100 pt-6">
+                    <button onclick="toggleReviewSection()" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                        🔍 <span id="btn-review-text">Ocultar / Mostrar revisión en pantalla</span>
+                    </button>
+                    
+                    <button onclick="window.print()" class="w-full sm:w-auto px-6 py-3 rounded-xl gradient-bg text-white font-bold hover:opacity-95 transition-all shadow-lg flex items-center justify-center gap-2">
+                        🖨️ Imprimir / Guardar en PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- DETAILED REVIEW SECTION -->
+            <div id="section-review" class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
+                    <span>Revisión Detallada de Respuestas (40 Preguntas)</span>
+                </h3>
+                <div id="review-container" class="space-y-4">
+                    <!-- Question Review cards injected here dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 mt-12 no-print border-t border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 text-center space-y-2">
+            <p class="font-medium text-slate-300">
+                Evaluación Inicial de Digitalización 3º ESO • Prof: Martín Ramón Morales Fuentes
+            </p>
+            <p class="text-slate-500">
+                Diseñado conforme a la legislación educativa LOMLOE para Educación Secundaria.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const quizData = [
+            // BLOQUE A: DISPOSITIVOS Y REDES (1 - 10)
+            {
+                id: 1,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "¿Qué componente hardware interno ejecuta las instrucciones de los programas y actúa como el 'cerebro' del equipo informático?",
+                options: ["Memoria RAM", "Procesador / CPU", "Disco Duro SSD", "Tarjeta Gráfica GPU"],
+                correct: 1,
+                explanation: "La CPU (Central Processing Unit) ejecuta el código binario y coordina todos los componentes del sistema.",
+                visualSvg: `<svg class="w-24 h-24 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg>`
+            },
+            {
+                id: 2,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                isEnglish: true,
+                competence: "Competencia Digital (CD) / CLIL",
+                type: "single",
+                question: "[ENGLISH Q1] Which storage component in a PC is non-volatile and retains operating system files and user documents permanently even when turned off?",
+                options: ["RAM Memory", "Solid State Drive (SSD)", "Cache Memory", "CPU Registers"],
+                correct: 1,
+                explanation: "An SSD is non-volatile persistent storage, unlike volatile RAM memory which loses data when powered down.",
+                visualSvg: `<svg class="w-20 h-20 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/><circle cx="8" cy="8" r="1"/><circle cx="16" cy="8" r="1"/><path d="M8 14h8M8 17h5"/></svg>`
+            },
+            {
+                id: 3,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                competence: "STEM / CD",
+                type: "single",
+                question: "Analiza el diagrama SVG inferior. ¿Qué dispositivo de red conecta los equipos locales de la LAN con la red externa (Internet) gestionando las direcciones IP?",
+                options: ["Switch de red", "Router / Módem", "Servidor de archivos", "Firewall de hardware"],
+                correct: 1,
+                explanation: "El Router interconecta redes distintas (LAN con WAN/Internet) y encamina los paquetes de datos mediante IP.",
+                visualSvg: `<svg class="w-full max-w-md h-32" viewBox="0 0 400 120" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="10" y="40" width="70" height="40" rx="5" class="stroke-blue-600 fill-blue-50"/>
+                    <text x="45" y="65" text-anchor="middle" class="text-xs fill-blue-900 font-bold" stroke="none">PC LAN</text>
+                    <line x1="80" y1="60" x2="130" y2="60" class="stroke-slate-400" stroke-dasharray="4"/>
+                    <rect x="130" y="35" width="80" height="50" rx="5" class="stroke-emerald-600 fill-emerald-50"/>
+                    <text x="170" y="65" text-anchor="middle" class="text-xs fill-emerald-900 font-bold" stroke="none">ROUTER</text>
+                    <line x1="210" y1="60" x2="270" y2="60" class="stroke-slate-400"/>
+                    <path d="M270 60 C280 40, 320 40, 330 60 C350 60, 350 80, 330 90 C320 95, 280 95, 270 80 C260 80, 260 60, 270 60 Z" class="stroke-sky-600 fill-sky-50"/>
+                    <text x="305" y="70" text-anchor="middle" class="text-xs fill-sky-900 font-bold" stroke="none">INTERNET</text>
+                </svg>`
+            },
+            {
+                id: 4,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                competence: "STEM",
+                type: "order",
+                question: "Ordena correctamente los pasos secuenciales para instalar un Sistema Operativo en una Máquina Virtual:",
+                options: [
+                    "Descargar la imagen ISO del sistema operativo",
+                    "Crear la Máquina Virtual y asignar RAM/Disco duro virtual",
+                    "Seleccionar la ISO como unidad de arranque virtual",
+                    "Completar el asistente de instalación del SO dentro de la VM"
+                ],
+                correctOrder: [0, 1, 2, 3],
+                explanation: "Primero se obtiene la ISO, luego se define el hardware virtual (VM), se vincula la ISO y se ejecuta el instalador.",
+                visualSvg: null
+            },
+            {
+                id: 5,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                isEnglish: true,
+                competence: "Competencia Digital (CD) / CLIL",
+                type: "single",
+                question: "[ENGLISH Q2] Which networking technology provides remote data processing and online storage accessible via internet browsers from any location?",
+                options: ["Local USB Storage", "Cloud Computing", "Bluetooth Peer-to-Peer", "Offline Optical Drive"],
+                correct: 1,
+                explanation: "Cloud computing relies on shared remote data center servers reachable over the Internet.",
+                visualSvg: `<svg class="w-20 h-20 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15a4 4 0 004 4h11a3 3 0 00.8-5.9 5 5 0 00-9.8-1.7A3.5 3.5 0 003 15z"/></svg>`
+            },
+            {
+                id: 6,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "En una red de ordenadores, ¿qué dirección física de 48 bits grabada en la tarjeta de red identifica unívocamente al dispositivo?",
+                options: ["Dirección IP pública", "Dirección MAC", "Máscara de subred", "Puerto DNS"],
+                correct: 1,
+                explanation: "La dirección MAC (Media Access Control) es el identificador físico grabado en el chip del adaptador de red.",
+                visualSvg: null
+            },
+            {
+                id: 7,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                competence: "STEM",
+                type: "single",
+                question: "¿A cuántos Gigabytes (GB) equivalen exactamente 2 Terabytes (TB) en el sistema estándar decimal?",
+                options: ["200 GB", "1.000 GB", "2.000 GB (o 2.048 GB en escala binaria)", "20.000 GB"],
+                correct: 2,
+                explanation: "1 TB equivale a 1.000 GB (o 1.024 GB en binario IEC). Por tanto 2 TB = 2.000 GB.",
+                visualSvg: null
+            },
+            {
+                id: 8,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "¿Cuál de las siguientes es la característica principal de un Sistema Operativo de Código Abierto (Open Source) como Ubuntu GNU/Linux?",
+                options: [
+                    "Es un sistema operativo comercial con código privado",
+                    "Su código fuente es accesible, modificable y redistribuible libremente",
+                    "Solo se puede usar en teléfonos móviles",
+                    "No requiere memoria RAM para funcionar"
+                ],
+                correct: 1,
+                explanation: "El código abierto permite estudiar, auditar y mejorar el código de programación sin restricciones propietarias.",
+                visualSvg: null
+            },
+            {
+                id: 9,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                competence: "STEM",
+                type: "single",
+                question: "¿Qué programa básico alojado en la memoria ROM/Flash de la placa base comprueba el hardware e inicia la carga del Sistema Operativo?",
+                options: ["Kernel", "BIOS / UEFI", "Explorador de archivos", "Antivirus"],
+                correct: 1,
+                explanation: "El firmware BIOS/UEFI realiza el POST (Power-On Self-Test) e inicializa el arranque de los discos.",
+                visualSvg: null
+            },
+            {
+                id: 10,
+                block: "Bloque A: Dispositivos y Redes",
+                blockKey: "A",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "¿Qué paradigma tecnológico conecta objetos cotidianos (electrodomésticos, sensores, persianas) a Internet para su monitorización remota?",
+                options: ["Internet de las Cosas (IoT)", "Red Privada VPN", "Computación Cuántica", "Servidor DNS"],
+                correct: 0,
+                explanation: "El IoT (Internet of Things) integra sensores y conectividad en objetos físicos.",
+                visualSvg: null
+            },
+
+            // BLOQUE B: ENTORNO PERSONAL DE APRENDIZAJE Y HERRAMIENTAS (11 - 20)
+            {
+                id: 11,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "CPSAA",
+                type: "single",
+                question: "¿Qué representan las siglas PLE en el ámbito educativo y digital?",
+                options: [
+                    "Programación Lógica Estructurada",
+                    "Personal Learning Environment (Entorno Personal de Aprendizaje)",
+                    "Plataforma Electrónica de Evaluación",
+                    "Protocolo de Lectura Electrónica"
+                ],
+                correct: 1,
+                explanation: "El PLE engloba el conjunto de herramientas, fuentes y conexiones digitales que cada persona utiliza para aprender.",
+                visualSvg: null
+            },
+            {
+                id: 12,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "STEM",
+                type: "formula",
+                question: "Escribe la fórmula exacta de Hoja de Cálculo para obtener la MEDIA ARITMÉTICA de los valores contenidos entre la celda A1 y la celda A10:",
+                placeholder: "Ej: =PROMEDIO(A1:A10)",
+                correctFormula: "=PROMEDIO(A1:A10)",
+                explanation: "La función correcta en hojas de cálculo (Excel, Calc, Google Sheets) es =PROMEDIO(A1:A10).",
+                visualSvg: null
+            },
+            {
+                id: 13,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "STEM",
+                type: "single",
+                question: "En una fórmula de hoja de cálculo, al escribir el símbolo de dólar ($B$4), ¿qué tipo de referencia estamos creando?",
+                options: ["Referencia relativa", "Referencia absoluta", "Referencia dinámica", "Referencia externa"],
+                correct: 1,
+                explanation: "El símbolo '$' fija tanto la columna como la fila impidiendo que cambie al arrastrar o copiar la fórmula.",
+                visualSvg: null
+            },
+            {
+                id: 14,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "En lenguaje HTML5 para el diseño de páginas web, ¿cuál es la etiqueta empleada para insertar un hipervínculo o enlace a otro sitio web?",
+                options: ["<link>", "<href>", "<a>", "<url>"],
+                correct: 2,
+                explanation: "La etiqueta <a> (anchor) junto con el atributo href (ej. <a href='...'>) define hiperenlaces.",
+                visualSvg: null
+            },
+            {
+                id: 15,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                isEnglish: true,
+                competence: "Competencia Digital (CD) / CLIL",
+                type: "single",
+                question: "[ENGLISH Q3] In block-based programming (like App Inventor or Scratch), which logic block executes instructions only when a specific condition evaluates to true?",
+                options: ["LOOP / FOREACH", "IF... THEN... ELSE", "SET VARIABLE", "WHEN BUTTON.CLICK"],
+                correct: 1,
+                explanation: "The IF...THEN conditional block tests a boolean expression and executes code conditionally.",
+                visualSvg: `<svg class="w-full max-w-xs h-24" viewBox="0 0 260 80" fill="none">
+                    <path d="M10 10 H200 V30 H120 V50 H200 V70 H10 Z" class="fill-amber-500 stroke-amber-700" stroke-width="2"/>
+                    <text x="25" y="26" class="fill-white font-bold text-xs" stroke="none">IF ( condition ) THEN</text>
+                    <text x="35" y="62" class="fill-white font-bold text-xs" stroke="none">DO ( actions )</text>
+                </svg>`
+            },
+            {
+                id: 16,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "STEM",
+                type: "single",
+                question: "¿Qué estructura de programación permite repetir una secuencia de instrucciones mientras se cumpla una condición determinada?",
+                options: ["Condicional IF-ELSE", "Bucle (Loop) FOR / WHILE", "Variable global", "Constante"],
+                correct: 1,
+                explanation: "Los bucles iterativos (While/For) repiten bloques de código optimizando el algoritmo.",
+                visualSvg: null
+            },
+            {
+                id: 17,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "CPSAA",
+                type: "single",
+                question: "Al trabajar colaborativamente en un documento en la nube, ¿cuál es la principal utilidad del 'Historial de versiones'?",
+                options: [
+                    "Aumentar la velocidad de descarga de archivos",
+                    "Consultar todos los cambios realizados y restaurar versiones anteriores si fuera necesario",
+                    "Borrar automáticamente el trabajo de los compañeros",
+                    "Traducir el documento a varios idiomas"
+                ],
+                correct: 1,
+                explanation: "El historial guarda instantáneas cronológicas permitiendo recuperar borradores anteriores sin riesgo de pérdida.",
+                visualSvg: null
+            },
+            {
+                id: 18,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "¿Qué formato gráfico vectorial es idóneo para logotipos e ilustraciones que requieren ampliarse sin perder calidad ni pixelarse?",
+                options: ["JPG / JPEG", "PNG", "SVG", "GIF"],
+                correct: 2,
+                explanation: "SVG (Scalable Vector Graphics) utiliza fórmulas matemáticas vectoriales escalables infinitamente.",
+                visualSvg: null
+            },
+            {
+                id: 19,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "En un buscador web como Google, si escribes la consulta entre comillas: \"inteligencia artificial en educación\", ¿qué resultado obtienes?",
+                options: [
+                    "Páginas que contengan alguna de esas palabras sueltas",
+                    "Resultados que incluyan exactamente esa frase literal con las palabras en ese mismo orden",
+                    "Únicamente imágenes y vídeos",
+                    "Artículos redactados exclusivamente en inglés"
+                ],
+                correct: 1,
+                explanation: "Las comillas fuerzan la búsqueda exacta y secuencial de la cadena de texto indicada.",
+                visualSvg: null
+            },
+            {
+                id: 20,
+                block: "Bloque B: Entorno Personal de Aprendizaje (PLE)",
+                blockKey: "B",
+                competence: "CPSAA",
+                type: "short",
+                question: "¿Cómo se llama el concepto o técnica de organizar los archivos en carpetas estructuradas con nombres claros y fechas?",
+                placeholder: "Escribe la respuesta (Ej. Taxonomía / Organización)",
+                keywords: ["taxonomia", "organizacion", "estructura", "orden", "gestion"],
+                explanation: "La organización jerárquica y taxonomía de archivos digitales facilita la localización rápida de recursos.",
+                visualSvg: null
+            },
+
+            // BLOQUE C: CIBERSEGURIDAD Y BIENESTAR DIGITAL (21 - 30)
+            {
+                id: 21,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                isEnglish: true,
+                competence: "Competencia Digital (CD) / CLIL",
+                type: "single",
+                question: "[ENGLISH Q4] What type of cyberattack sends fraudulent emails disguised as legitimate institutions (like banks) to trick users into revealing passwords?",
+                options: ["Phishing", "Ransomware", "DDoS Attack", "Hardware Keylogger"],
+                correct: 0,
+                explanation: "Phishing uses deceptive emails and spoofed sites to steal personal credentials via social engineering.",
+                visualSvg: `<svg class="w-20 h-20 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7l-9-5z"/><path d="M12 8v4M12 16h.01"/></svg>`
+            },
+            {
+                id: 22,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "¿En qué consiste el mecanismo de Autenticación de Doble Factor (2FA)?",
+                options: [
+                    "Introducir la misma contraseña dos veces seguidas",
+                    "Requerir dos elementos distintos (ej. contraseña + código temporal en la app móvil) para iniciar sesión",
+                    "Usar dos ordenadores diferentes para acceder a la cuenta",
+                    "Cambiar la clave cada dos días"
+                ],
+                correct: 1,
+                explanation: "El 2FA combina algo que sabes (contraseña) con algo que posees (teléfono/app autenticadora) multiplicando la seguridad.",
+                visualSvg: null
+            },
+            {
+                id: 23,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "¿Qué tipo de código malicioso (Malware) bloquea o cifra los archivos del usuario exigiendo un pago económico para su rescate?",
+                options: ["Spyware", "Ransomware", "Adware", "Troyano bancario"],
+                correct: 1,
+                explanation: "El Ransomware secuestra la información cifrándola y exige rescates económicos.",
+                visualSvg: null
+            },
+            {
+                id: 24,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "CCEC / CD",
+                type: "single",
+                question: "¿A qué se refiere el concepto de 'Huella Digital' (Digital Footprint) de un usuario en Internet?",
+                options: [
+                    "Al escaneo de la huella dactilar para desbloquear la pantalla",
+                    "Al rastro acumulado de publicaciones, comentarios, fotos y búsquedas que dejamos al usar Internet",
+                    "A la velocidad de la tarjeta de red",
+                    "Al historial de compras en tiendas físicas"
+                ],
+                correct: 1,
+                explanation: "La Huella Digital conforma nuestra identidad digital pública a partir de los rastro de actividad acumulados.",
+                visualSvg: null
+            },
+            {
+                id: 25,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "CPSAA",
+                type: "single",
+                question: "Para evitar la fatiga visual ante pantallas informáticas, ¿en qué consiste la regla ergonómica 20-20-20?",
+                options: [
+                    "Trabajar 20 horas seguidas y descansar 20 minutos",
+                    "Cada 20 minutos de pantalla, mirar a un punto lejano (a unos 6 metros / 20 pies) durante 20 segundos",
+                    "Parpadear 20 veces por hora",
+                    "Bajar el brillo de la pantalla al 20%"
+                ],
+                correct: 1,
+                explanation: "Relaja el enfoque ocular enfocando la vista a distancia periódicamente.",
+                visualSvg: null
+            },
+            {
+                id: 26,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "CPSAA",
+                type: "single",
+                question: "¿Cómo se denomina al conjunto de reglas de comportamiento educado, respeto y cortesía aplicables en la comunicación digital?",
+                options: ["Protocolo HTTP", "Netiqueta", "Licencia Copyleft", "Algoritmo de cifrado"],
+                correct: 1,
+                explanation: "La Netiqueta (Network Etiquette) orienta las conductas de convivencia respetuosa en redes y foros.",
+                visualSvg: null
+            },
+            {
+                id: 27,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "Al conectarte a una red Wi-Fi pública e insegura (ej. aeropuerto), ¿qué herramienta permite cifrar todo tu tráfico de datos para prevenir espionajes?",
+                options: ["Antivirus convencional", "Red Privada Virtual (VPN)", "Navegador en modo incógnito", "Servidor DNS"],
+                correct: 1,
+                explanation: "Una VPN (Virtual Private Network) crea un túnel cifrado de comunicaciones seguras.",
+                visualSvg: null
+            },
+            {
+                id: 28,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "CPSAA",
+                type: "single",
+                question: "En la prevención de riesgos en la red, ¿qué diferencia existe entre el Cyberbullying y el Grooming?",
+                options: [
+                    "Son exactamente lo mismo",
+                    "El Grooming implica el engaño deliberado de un adulto hacia un menor con fines de abuso; el Cyberbullying ocurre entre iguales",
+                    "El Cyberbullying solo se da por correo electrónico",
+                    "El Grooming es una estafa bancaria"
+                ],
+                correct: 1,
+                explanation: "El Grooming lo comete un adulto mediante manipulación a menores; el Cyberbullying es acoso entre iguales (compañeros).",
+                visualSvg: null
+            },
+            {
+                id: 29,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "¿Qué peligro tiene conceder permisos de acceso a la 'Ubicación GPS y Micrófono' a una app sencilla que no los necesita (ej. una linterna)?",
+                options: [
+                    "Consume espacio de disco sin mayor importancia",
+                    "Permite el rastreo no autorizado y la comercialización de datos privados de movilidad",
+                    "Desconfigura la tarjeta SIM",
+                    "Borra los contactos de la agenda"
+                ],
+                correct: 1,
+                explanation: "Exponer permisos sensibles facilita el perfilado comercial e intrusiones en la privacidad.",
+                visualSvg: null
+            },
+            {
+                id: 30,
+                block: "Bloque C: Ciberseguridad y Bienestar Digital",
+                blockKey: "C",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "¿Qué garantiza el icono del candado cerrado y el protocolo HTTPS en la barra del navegador web?",
+                options: [
+                    "Que la página web no contiene ningún tipo de mentira ni noticia falsa",
+                    "Que la transmisión de datos entre tu navegador y el servidor está cifrada mediante un certificado SSL/TLS",
+                    "Que el sitio web es gratuito",
+                    "Que la web se ha cargado desde un satélite"
+                ],
+                correct: 1,
+                explanation: "HTTPS garantiza la confidencialidad de la información enviada mediante canal cifrado.",
+                visualSvg: null
+            },
+
+            // BLOQUE D: CIUDADANÍA DIGITAL CRÍTICA, LICENCIAS E IA (31 - 40)
+            {
+                id: 31,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                isEnglish: true,
+                competence: "Competencia Digital (CD) / CLIL",
+                type: "single",
+                question: "[ENGLISH Q5] Under Creative Commons (CC) licenses, which condition (BY) mandates that anyone using the work must give appropriate credit to the original author?",
+                options: ["NC (Non-Commercial)", "ND (No-Derivatives)", "BY (Attribution)", "SA (Share-Alike)"],
+                correct: 2,
+                explanation: "The CC BY (Attribution) condition requires crediting the creator of the original content.",
+                visualSvg: `<svg class="w-20 h-20 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 7a3 3 0 100 6 3 3 0 000-6zM8 18c0-2 2-3.5 4-3.5s4 1.5 4 3.5"/></svg>`
+            },
+            {
+                id: 32,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "CCEC",
+                type: "single",
+                question: "¿Qué diferencia principal existe entre una obra con reservadísima licencia de Copyright y una obra que ha pasado al Dominio Público?",
+                options: [
+                    "El dominio público exige siempre pago de licencias",
+                    "El Dominio Público permite usar, modificar y distribuir la obra libremente al haber caducado los derechos patrimoniales de autor",
+                    "El Copyright dura sólo 1 año",
+                    "Las obras de dominio público no se pueden descargar"
+                ],
+                correct: 1,
+                explanation: "Al finalizar el plazo legal de protección de derechos de autor, las obras entran al Dominio Público libre.",
+                visualSvg: null
+            },
+            {
+                id: 33,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "Cuando un modelo de Inteligencia Artificial emite respuestas discriminatorias o prejuiciosas porque los datos empleados en su entrenamiento reflejaban estereotipos humanos, ¿cómo se denomina este problema?",
+                options: ["Sesgo Algorítmico", "Fallo de memoria caché", "Ataque cibernético", "Latencia de red"],
+                correct: 0,
+                explanation: "El Sesgo Algorítmico (Algorithmic Bias) ocurre cuando la IA hereda prejuicios contenidos en sus datos de entrenamiento.",
+                visualSvg: `<svg class="w-20 h-20 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 6v6l4 2"/></svg>`
+            },
+            {
+                id: 34,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "Competencia Digital (CD)",
+                type: "short",
+                question: "¿Cómo se llama el texto, instrucción o pregunta detallada que le escribimos a un modelo de IA Generativa (ej. ChatGPT) para guiar su respuesta?",
+                placeholder: "Escribe la palabra técnica...",
+                keywords: ["prompt", "prompts", "instruccion", "peticion"],
+                explanation: "Un 'Prompt' es la instrucción orientadora redactada en lenguaje natural dirigida a la IA.",
+                visualSvg: null
+            },
+            {
+                id: 35,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "CPSAA",
+                type: "single",
+                question: "Para verificar la veracidad de una noticia dudosa o alarmante en redes sociales (Fact-checking), ¿cuál es el procedimiento más adecuado?",
+                options: [
+                    "Reenviarla inmediatamente a grupos de WhatsApp",
+                    "Contrastar la noticia en agencias de verifación independientes, revisar las fuentes originales e inspeccionar las fechas e imágenes",
+                    "Creerla si tiene miles de 'Me Gusta'",
+                    "Ignorar si viene firmada"
+                ],
+                correct: 1,
+                explanation: "El contraste crítico de fuentes primarias e inspección de imágenes frena la desinformación.",
+                visualSvg: null
+            },
+            {
+                id: 36,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "STEM / CCEC",
+                type: "single",
+                question: "¿Qué término describe la práctica industrial de planificar una vida útil artificialmente corta en un producto informático para forzar su sustitución?",
+                options: ["Obsolescencia Programada", "Reciclaje Tecnológico", "Sostenibilidad Digital", "Desarrollo Ágil"],
+                correct: 0,
+                explanation: "La Obsolescencia Programada acorta la durabilidad de los equipos generando un grave impacto ambiental e insostenibilidad.",
+                visualSvg: null
+            },
+            {
+                id: 37,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "STEM",
+                type: "single",
+                question: "¿Por qué los servicios masivos en la nube y el streaming de vídeo de alta definición consumen importantes cantidades de energía eléctrica?",
+                options: [
+                    "Porque las antenas Wi-Fi consumen gas natural",
+                    "Por el funcionamiento ininterrumpido y la refrigeración industrial de los Centros de Procesamiento de Datos (Data Centers)",
+                    "Porque los cables de fibra óptica se calientan",
+                    "El almacenamiento en la nube no consume electricidad"
+                ],
+                correct: 1,
+                explanation: "Los Data Centers operan miles de servidores continuos demandando alta potencia eléctrica y climatización masiva.",
+                visualSvg: null
+            },
+            {
+                id: 38,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "CPSAA",
+                type: "single",
+                question: "¿A qué se refiere el término 'Brecha Digital' (Digital Divide)?",
+                options: [
+                    "A la rotura física de la pantalla del ordenador",
+                    "A la desigualdad socioeconómica en el acceso, uso y capacitación en tecnologías entre diferentes regiones o grupos sociales",
+                    "A la diferencia de velocidad entre fibra y 5G",
+                    "A la competencia entre marcas de software"
+                ],
+                correct: 1,
+                explanation: "La Brecha Digital refleja las diferencias de acceso y competencias tecnológicas que pueden generar exclusión.",
+                visualSvg: null
+            },
+            {
+                id: 39,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "Competencia Digital (CD)",
+                type: "single",
+                question: "En España, ¿qué sistema telemático seguro de la Administración permite identificarse electrónicamente para tramitar expedientes educativos o pedir citas oficiales?",
+                options: ["Perfil público de redes sociales", "Sistema Cl@ve y Certificado Digital / DNIe", "Cuenta de correo personal", "Número telefónico"],
+                correct: 1,
+                explanation: "El sistema Cl@ve y los certificados digitales verifican la identidad legal de los ciudadanos con firma criptográfica.",
+                visualSvg: null
+            },
+            {
+                id: 40,
+                block: "Bloque D: Ciudadanía Digital e IA",
+                blockKey: "D",
+                competence: "Competencia Digital (CD) / CPSAA",
+                type: "single",
+                question: "¿Cuál de los siguientes principios debe regir el desarrollo ético de la Inteligencia Artificial de acuerdo con el marco regulatorio europeo?",
+                options: [
+                    "Supervisión humana, transparencia, privacidad, equidad y no discriminación",
+                    "Sustituir por completo a las personas en el trabajo",
+                    "Permitir la suplantación de identidad mediante Deepfakes sin marcar",
+                    "Ocultar los algoritmos a las administraciones"
+                ],
+                correct: 0,
+                explanation: "El marco ético europeo exige que la IA respete los derechos fundamentales, la transparencia y el control humano.",
+                visualSvg: null
+            }
+        ];
+
+        // STATE VARIABLES
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let userData = {
+            name: "",
+            surname: "",
+            group: "",
+            email: "",
+            timestamp: ""
+        };
+
+        // START ASSESSMENT
+        function startAssessment(e) {
+            e.preventDefault();
+            userData.name = document.getElementById('user-name').value.trim();
+            userData.surname = document.getElementById('user-surname').value.trim();
+            userData.group = document.getElementById('user-group').value;
+            userData.email = document.getElementById('user-email').value.trim();
+            userData.timestamp = new Date().toLocaleString('es-ES');
+
+            // UI Header Updates
+            document.getElementById('badge-student-name').innerText = `${userData.name} ${userData.surname}`;
+            document.getElementById('badge-student-group').innerText = `Grupo: ${userData.group}`;
+            
+            document.getElementById('screen-register').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+
+            renderMatrixModal();
+            loadQuestion(0);
+        }
+
+        // LOAD QUESTION BY INDEX
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const q = quizData[index];
+
+            // Progress Bar & Header
+            document.getElementById('progress-text').innerText = `${index + 1} de ${quizData.length}`;
+            const pct = ((index + 1) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+            document.getElementById('badge-progress').innerText = `Progreso: ${countAnswered()} / ${quizData.length}`;
+
+            // Tags
+            document.getElementById('block-tag').innerText = q.block;
+            const enTag = document.getElementById('english-tag');
+            if (q.isEnglish) {
+                enTag.classList.remove('hidden');
+            } else {
+                enTag.classList.add('hidden');
+            }
+
+            // Details
+            document.getElementById('q-number').innerText = `Pregunta ${String(index + 1).padStart(2, '0')} / ${quizData.length}`;
+            document.getElementById('q-competence').innerText = q.competence;
+            document.getElementById('q-title').innerText = q.question;
+
+            // Visual Container
+            const visualBox = document.getElementById('q-visual');
+            if (q.visualSvg) {
+                visualBox.innerHTML = q.visualSvg;
+                visualBox.classList.remove('hidden');
+            } else {
+                visualBox.classList.add('hidden');
+                visualBox.innerHTML = '';
+            }
+
+            // Answer Interactive Container Render
+            const optionsContainer = document.getElementById('q-options');
+            optionsContainer.innerHTML = '';
+
+            if (q.type === 'single') {
+                q.options.forEach((optText, optIdx) => {
+                    const isSelected = userAnswers[index] === optIdx;
+                    const optBtn = document.createElement('button');
+                    optBtn.type = 'button';
+                    optBtn.onclick = () => selectSingleOption(optIdx);
+                    
+                    optBtn.className = `w-full text-left p-4 rounded-xl border transition-all flex items-start gap-3 ${
+                        isSelected 
+                            ? 'bg-blue-50 border-blue-600 text-blue-900 font-semibold shadow-sm ring-2 ring-blue-500/20' 
+                            : 'bg-slate-50/50 hover:bg-slate-100 border-slate-200 text-slate-700'
+                    }`;
+
+                    const letter = String.fromCharCode(65 + optIdx);
+                    optBtn.innerHTML = `
+                        <span class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
+                            isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                        }">${letter}</span>
+                        <span class="text-sm sm:text-base pt-0.5">${optText}</span>
+                    `;
+                    optionsContainer.appendChild(optBtn);
+                });
+            } 
+            else if (q.type === 'formula' || q.type === 'short') {
+                const currentVal = userAnswers[index] || '';
+                const inputWrap = document.createElement('div');
+                inputWrap.className = 'space-y-2';
+                inputWrap.innerHTML = `
+                    <label class="block text-xs font-bold uppercase text-slate-500">Respuesta de texto / código:</label>
+                    <input type="text" id="interactive-text-input" value="${currentVal}" placeholder="${q.placeholder}" 
+                        oninput="handleTextInput(this.value)"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-base outline-none bg-slate-50">
+                    <p class="text-xs text-slate-400">Escribe tu respuesta y presiona Siguiente.</p>
+                `;
+                optionsContainer.appendChild(inputWrap);
+            } 
+            else if (q.type === 'order') {
+                if (!userAnswers[index]) {
+                    userAnswers[index] = [...q.options];
+                }
+                const currentList = userAnswers[index];
+
+                const orderWrap = document.createElement('div');
+                orderWrap.className = 'space-y-2';
+                
+                currentList.forEach((itemText, itemIdx) => {
+                    const row = document.createElement('div');
+                    row.className = 'flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium';
+                    row.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">${itemIdx + 1}</span>
+                            <span>${itemText}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <button type="button" onclick="moveOrder(${itemIdx}, -1)" ${itemIdx === 0 ? 'disabled' : ''} class="px-2 py-1 bg-white border rounded hover:bg-slate-100 disabled:opacity-30 text-xs font-bold">▲</button>
+                            <button type="button" onclick="moveOrder(${itemIdx}, 1)" ${itemIdx === currentList.length - 1 ? 'disabled' : ''} class="px-2 py-1 bg-white border rounded hover:bg-slate-100 disabled:opacity-30 text-xs font-bold">▼</button>
+                        </div>
+                    `;
+                    orderWrap.appendChild(row);
+                });
+                optionsContainer.appendChild(orderWrap);
+            }
+
+            // Navigation Controls Setup
+            document.getElementById('btn-prev').disabled = (index === 0);
+
+            const isLastQuestion = (index === quizData.length - 1);
+            const btnNext = document.getElementById('btn-next');
+            const btnFinish = document.getElementById('btn-finish');
+
+            if (isLastQuestion) {
+                btnNext.classList.add('hidden');
+                btnFinish.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnFinish.classList.add('hidden');
+            }
+        }
+
+        // OPTION HANDLERS
+        function selectSingleOption(optIdx) {
+            userAnswers[currentQuestionIndex] = optIdx;
+            loadQuestion(currentQuestionIndex);
+            renderMatrixModal();
+        }
+
+        function handleTextInput(val) {
+            userAnswers[currentQuestionIndex] = val;
+            renderMatrixModal();
+        }
+
+        function moveOrder(itemIdx, dir) {
+            const list = [...userAnswers[currentQuestionIndex]];
+            const targetIdx = itemIdx + dir;
+            if (targetIdx < 0 || targetIdx >= list.length) return;
+            const temp = list[itemIdx];
+            list[itemIdx] = list[targetIdx];
+            list[targetIdx] = temp;
+            userAnswers[currentQuestionIndex] = list;
+            loadQuestion(currentQuestionIndex);
+            renderMatrixModal();
+        }
+
+        // NAVIGATION
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function countAnswered() {
+            return userAnswers.filter(a => a !== null && a !== "").length;
+        }
+
+        // MATRIX MODAL
+        function toggleMatrixModal() {
+            const modal = document.getElementById('matrix-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function renderMatrixModal() {
+            const grid = document.getElementById('matrix-grid');
+            grid.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const isAnswered = userAnswers[idx] !== null && userAnswers[idx] !== "";
+                const isCurrent = currentQuestionIndex === idx;
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => {
+                    loadQuestion(idx);
+                    toggleMatrixModal();
+                };
+
+                let colorClasses = 'bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200';
+                if (isAnswered) colorClasses = 'bg-emerald-500 text-white border-emerald-600 font-bold';
+                if (isCurrent) colorClasses = 'bg-blue-600 text-white border-blue-700 font-extrabold ring-2 ring-blue-400';
+
+                btn.className = `h-10 rounded-lg text-xs font-semibold border flex items-center justify-center transition-all ${colorClasses}`;
+                btn.innerText = idx + 1;
+                grid.appendChild(btn);
+            });
+        }
+
+        // SUBMISSION CONFIRMATION
+        function confirmSubmission() {
+            const unanswered = quizData.length - countAnswered();
+            if (unanswered > 0) {
+                const proceed = confirm(`Tienes ${unanswered} pregunta(s) sin responder. ¿Deseas entregar la evaluación de todos modos?`);
+                if (!proceed) return;
+            }
+            calculateAndShowResults();
+        }
+
+        // CALCULATE RESULTS & DISPLAY DASHBOARD
+        function calculateAndShowResults() {
+            let correctCount = 0;
+            let blockScores = { A: { c: 0, t: 0 }, B: { c: 0, t: 0 }, C: { c: 0, t: 0 }, D: { c: 0, t: 0 } };
+            let englishScore = { c: 0, t: 0 };
+
+            quizData.forEach((q, idx) => {
+                const uAns = userAnswers[idx];
+                const key = q.blockKey;
+                blockScores[key].t++;
+                if (q.isEnglish) englishScore.t++;
+
+                let isCorrect = false;
+
+                if (q.type === 'single') {
+                    if (uAns === q.correct) isCorrect = true;
+                } 
+                else if (q.type === 'formula') {
+                    if (uAns && uAns.trim().toUpperCase().replace(/\s+/g, '') === q.correctFormula.toUpperCase().replace(/\s+/g, '')) {
+                        isCorrect = true;
+                    }
+                } 
+                else if (q.type === 'short') {
+                    if (uAns && q.keywords.some(kw => uAns.toLowerCase().includes(kw))) {
+                        isCorrect = true;
+                    }
+                } 
+                else if (q.type === 'order') {
+                    if (Array.isArray(uAns) && JSON.stringify(uAns) === JSON.stringify(q.options)) {
+                        isCorrect = true;
+                    }
+                }
+
+                if (isCorrect) {
+                    correctCount++;
+                    blockScores[key].c++;
+                    if (q.isEnglish) englishScore.c++;
+                }
+            });
+
+            const score10 = ((correctCount / quizData.length) * 10).toFixed(1);
+
+            document.getElementById('res-student-fullname').innerText = `${userData.name} ${userData.surname}`;
+            document.getElementById('res-student-group').innerText = `Curso: ${userData.group}`;
+            document.getElementById('res-student-email').innerText = `Email: ${userData.email}`;
+            document.getElementById('res-date').innerText = `Fecha: ${userData.timestamp}`;
+            document.getElementById('res-score-num').innerText = score10;
+
+            const badge = document.getElementById('res-level-badge');
+            let levelText = "Insuficiente / Requiere Refuerzo";
+            let levelColor = "bg-red-100 text-red-800 border-red-300";
+
+            if (score10 >= 9.0) {
+                levelText = "Sobresaliente";
+                levelColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+            } else if (score10 >= 7.0) {
+                levelText = "Notable";
+                levelColor = "bg-blue-100 text-blue-800 border-blue-300";
+            } else if (score10 >= 5.0) {
+                levelText = "Suficiente / Competente";
+                levelColor = "bg-amber-100 text-amber-800 border-amber-300";
+            }
+
+            badge.className = `mt-3 px-4 py-1.5 rounded-full text-xs font-bold border ${levelColor}`;
+            badge.innerText = `Nivel: ${levelText}`;
+
+            const setBar = (scoreObj, textId, barId) => {
+                const pct = scoreObj.t > 0 ? Math.round((scoreObj.c / scoreObj.t) * 100) : 0;
+                document.getElementById(textId).innerText = `${pct}% (${scoreObj.c}/${scoreObj.t})`;
+                document.getElementById(barId).style.width = `${pct}%`;
+            };
+
+            setBar(blockScores.A, 'score-block-a', 'bar-block-a');
+            setBar(blockScores.B, 'score-block-b', 'bar-block-b');
+            setBar(blockScores.C, 'score-block-c', 'bar-block-c');
+            setBar(blockScores.D, 'score-block-d', 'bar-block-d');
+            setBar(englishScore, 'score-block-en', 'bar-block-en');
+
+            const advBox = document.getElementById('res-pedagogical-advice');
+            let adviceText = `El estudiante ${userData.name} ${userData.surname} ha completado la prueba diagnóstica obteniendo una calificación global de ${score10}/10. `;
+            if (score10 >= 7.0) {
+                adviceText += "Muestra un sólido dominio de los conceptos de hardware, redes y ciberseguridad, así como buena alfabetización digital para afrontar el curso de 3º ESO.";
+            } else if (score10 >= 5.0) {
+                adviceText += "Demuestra un nivel de competencia digital adecuado, aconsejándose reforzar el manejo de fórmulas de hoja de cálculo, licencias de propiedad intelectual y seguridad.";
+            } else {
+                adviceText += "Se aprecian carencias conceptuales en arquitectura de ordenadores, ciberseguridad y pensamiento algorítmico. Se recomienda planificar actividades adaptadas de nivelación.";
+            }
+            advBox.innerText = adviceText;
+
+            generateReviewContent();
+
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // GENERATE REVIEW CONTENT
+        function generateReviewContent() {
+            const container = document.getElementById('review-container');
+            container.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const uAns = userAnswers[idx];
+                let isCorrect = false;
+                let userText = '';
+                let correctText = '';
+
+                if (q.type === 'single') {
+                    isCorrect = (uAns === q.correct);
+                    userText = uAns !== null ? q.options[uAns] : '<em>Sin responder</em>';
+                    correctText = q.options[q.correct];
+                } 
+                else if (q.type === 'formula') {
+                    isCorrect = uAns && (uAns.trim().toUpperCase().replace(/\s+/g, '') === q.correctFormula.toUpperCase().replace(/\s+/g, ''));
+                    userText = uAns || '<em>Sin responder</em>';
+                    correctText = q.correctFormula;
+                } 
+                else if (q.type === 'short') {
+                    isCorrect = uAns && q.keywords.some(kw => uAns.toLowerCase().includes(kw));
+                    userText = uAns || '<em>Sin responder</em>';
+                    correctText = `Concepto clave: ${q.keywords.join(' / ')}`;
+                } 
+                else if (q.type === 'order') {
+                    isCorrect = Array.isArray(uAns) && JSON.stringify(uAns) === JSON.stringify(q.options);
+                    userText = Array.isArray(uAns) ? uAns.join(' → ') : '<em>Sin responder</em>';
+                    correctText = q.options.join(' → ');
+                }
+
+                const card = document.createElement('div');
+                card.className = `p-4 sm:p-5 rounded-2xl border ${
+                    isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-red-50/50 border-red-200'
+                } card-print`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                        <span class="text-xs font-bold ${isCorrect ? 'text-emerald-700' : 'text-red-700'}">
+                            ${isCorrect ? '✅ CORRECTA' : '❌ INCORRECTA / PENDIENTE'}
+                        </span>
+                        <span class="text-xs text-slate-400 font-semibold">Pregunta ${idx + 1} de 40 • ${q.block}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">${q.question}</h4>
+                    <div class="text-xs space-y-1 text-slate-600">
+                        <p><strong>Tu respuesta:</strong> <span class="${isCorrect ? 'text-emerald-800 font-semibold' : 'text-red-700 font-semibold'}">${userText}</span></p>
+                        ${!isCorrect ? `<p><strong>Respuesta correcta / esperada:</strong> <span class="text-emerald-800 font-bold">${correctText}</span></p>` : ''}
+                        <p class="text-slate-500 italic mt-2 bg-white/80 p-2.5 rounded-lg border border-slate-200">
+                            💡 <strong>Explicación:</strong> ${q.explanation}
+                        </p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // TOGGLE REVIEW SECTION DISPLAY
+        function toggleReviewSection() {
+            const revSec = document.getElementById('section-review');
+            const btnText = document.getElementById('btn-review-text');
+            if (revSec.classList.contains('hidden')) {
+                revSec.classList.remove('hidden');
+                btnText.innerText = "Ocultar revisión en pantalla";
+            } else {
+                revSec.classList.add('hidden');
+                btnText.innerText = "Mostrar revisión en pantalla";
+            }
+        }
+    </script>
+</body>
+</html>
